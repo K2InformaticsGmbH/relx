@@ -241,5 +241,5 @@ set description=Erlang node %node_name% in %rootdir%
 :attach
 @set boot=-boot "%clean_boot_script%" -boot_var RELEASE_DIR "%release_root_dir%"
 @start "%node_name% attach" %werl% %boot% ^
-       -remsh %node_name%%hostname% %node_type% console -setcookie %cookie%
+       -remsh %node_name%%hostname% %node_type% console_%node_name%_%random% -setcookie %cookie% %erl_opts%
 @goto :eof
