@@ -83,11 +83,13 @@
 
 :: Collect any additional VM args into erl_opts
 @setlocal EnableDelayedExpansion
-@for /f "usebackq tokens=1-2" %%I in (`findstr /r "^[^#]" "%vm_args%"`) do @(
+@for /f "usebackq tokens=1,*" %%I in (`findstr /r "^[^#]" "%vm_args%"`) do @(
   if not "%%I" == "-name" (
     if not "%%I" == "-sname" (
       if not "%%I" == "-setcookie" (
-        set erl_opts=!erl_opts! %%I %%J
+        if not "%%I" == "" (
+          set erl_opts=!erl_opts! %%I %%J
+        )
       )
     )
   )
@@ -241,5 +243,6 @@ set description=Erlang node %node_name% in %rootdir%
 :attach
 @set boot=-boot "%clean_boot_script%" -boot_var RELEASE_DIR "%release_root_dir%"
 @start "%node_name% attach" %werl% %boot% ^
-       -remsh %node_name%%hostname% %node_type% console_%node_name%_%random% -setcookie %cookie% %erl_opts%
+       -remsh %node_name%%hostname% %node_type% console_%node_name%_%random% -setcookie %cookie% %erl_opts% ^
+       %erl_opts%
 @goto :eof
