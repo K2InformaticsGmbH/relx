@@ -185,10 +185,10 @@
 :install
 set args=%erl_opts% -setcookie %cookie% ++ -rootdir \"%rootdir%\"
 set start_erl=%erts_dir%\bin\start_erl.exe
-set description=Erlang node %node_name% in %rootdir%
+set description=Erlang node %node_name%%hostname% in %rootdir%
 @if "" == "%2" (
   :: Install the service
-  %erlsrv% add %service_name% %node_type% "%node_name%" -c "%description%" -w "%rootdir%" -m "%start_erl%" -args "%args%" -stopaction "init:stop()."
+  %erlsrv% add %service_name% %node_type% "%node_name%%hostname%" -c "%description%" -w "%rootdir%" -m "%start_erl%" -args "%args%" -stopaction "init:stop()."
 ) else (
   :: relup and reldown
   goto relup
@@ -242,7 +242,10 @@ set description=Erlang node %node_name% in %rootdir%
 :: Attach to a running node
 :attach
 @set boot=-boot "%clean_boot_script%" -boot_var RELEASE_DIR "%release_root_dir%"
+set "console_node=console_%node_name%_%random%"
+if "-name" == "%node_type%" (
+  set "console_node=%console_node%%hostname%"
+)
 @start "%node_name% attach" %werl% %boot% ^
-       -remsh %node_name%%hostname% %node_type% console_%node_name%_%random% -setcookie %cookie% %erl_opts% ^
-       %erl_opts%
+  -remsh %node_name%%hostname% %node_type% %console_node% -setcookie %cookie% %erl_opts%
 @goto :eof
