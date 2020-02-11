@@ -243,7 +243,7 @@ set description=Erlang node %node_name%%hostname% in %rootdir%
 :attach
 @set boot=-boot "%clean_boot_script%" -boot_var RELEASE_DIR "%release_root_dir%"
 set "console_node=console_%node_name%_%random%"
-if "-name" == "%node_type%" (
+@if "-name" == "%node_type%" (
   set "console_node=%console_node%%hostname%"
 )
 @start "%node_name% attach" %werl% %boot% ^
